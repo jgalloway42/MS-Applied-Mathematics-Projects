@@ -1,0 +1,14 @@
+https://www.kaggle.com/aaron7sun/stocknews/data 
+stocknews.zip
+
+https://www.kaggle.com/therohk/million-headlines       
+million-headlines.zip
+
+https://webhose.io/free-datasets/financial-news-articles/
+666_20170904105517.zip
+
+http://www.cboe.com/products/vix-index-volatility/vix-options-and-futures/vix-index/vix-historical-data
+vixarchive.xls
+vixcurrent.csv
+vxoarchive.xls
+vxocurrent.csv
