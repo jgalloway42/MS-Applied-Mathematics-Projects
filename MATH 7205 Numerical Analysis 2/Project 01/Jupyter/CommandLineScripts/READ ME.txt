@@ -1,0 +1,30 @@
+Files:
+HHModel.py - Class implementation of Hodgkin-Huxley Model
+Solvers.py - Class implementation of numerical integration techniques
+
+RunMe_Coefficients.py - Plots Voltage Dependent Alpha and Beta Coefficients
+RunMe_ErrorCompare.py - Runs multiple simulations for multiple step sizes and compares the error
+                        against a benchmark of RK4 with step size 0.001 ms
+Run_LongSimForwardEuler.py - Runs a simulation using forward Euler and plots all variables for 500 ms 
+Run_LongSimHuensMethod.py - Runs a simulation using Huen's Method and plots all variables for 500 ms 
+Run_LongSimRungaKutta.py - Runs a simulation using Runga Kutta and plots all variables for 500 ms 
+Run_LongSims.py - Runs a simulation using all methods and plots voltages from each for 500 ms 
+RunMe_PhasePortraitRungaKutta.py - Runs a RK simulation and plots the phase portrait for all variables
+RunMe_SingleSpikeForwardEuler.py - Runs a simulation with forward Euler with a current pulse producing a single
+                                   limit cycle and plots all variables
+RunMe_SingleSpikeHuensMethod.py - Runs a simulation with Huens Method with a current pulse producing a single
+                                   limit cycle and plots all variables
+RunMe_SingleSpikeRungaKutta.py - Runs a simulation with Runga-Kutta with a current pulse producing a single
+                                   limit cycle and plots all variables
+RunMe_SingleSpikeSims.py - Runs a simulation using all solver methods to produce a single limit cycle
+                           and plots membrane voltage for all methods
+RunMe_StabilityCompare.py - Runs multilple simulations for multiple steps sizes compares the results
+
+Run from commandline as...
+python RunMe_(rest of runner filename here).py
+
+RunMe_*.py must be in the same folder as: HHModel.py and Solvers.py
+
+Versions Used for Imports:
+Python Version 3.7.3, Matplotlib Version 3.0.3, Scipy Version 1.4.1,
+Numpy Version 1.16.2
