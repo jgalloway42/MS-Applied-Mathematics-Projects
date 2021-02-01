@@ -1,0 +1,86 @@
+---
+title: "Galloway DS 5230 Final Project-Data Cleaning"
+output: html_notebook
+---
+
+```{r}
+# Imports
+
+library(Rtsne)
+library(tidyverse)
+library(textstem)
+#library(NLP)
+#library(tm)
+library(quanteda)
+#library(wordnet)
+
+# print working director
+getwd()
+```
+```{r}
+# Load Data from CSV's
+redditDF <- read.csv('./data/RedditNews.csv')
+abcDF <- read.csv('./data/abcnews-date-text.csv')
+```
+View Imported Data
+```{r}
+head(redditDF)
+head(abcDF)
+```
+Convert Date Rows to datetime data type and align column names
+```{r}
+redditDF$Date <- strptime(redditDF$Date,format='%Y-%m-%d')
+abcDF$publish_date <- strptime(abcDF$publish_date,
+                               format='%Y%m%d')
+
+names(abcDF) <- names(redditDF)
+```
+Look at summaries of dataframes
+```{r}
+'Reddit News'
+summary(redditDF)
+'ABC News'
+summary(abcDF)
+```
+Concatenate Reddit and ABC Headlines
+```{r}
+totalDF <- rbind(abcDF,redditDF)
+summary(totalDF)
+```
+Clean the Headlines
+```{r}
+totalDF$NoPunctLower = stripWhitespace(tolower(removePunctuation(totalDF$News)))
+totalDF$Lemma = lemmatize_strings(totalDF$NoPunctLower)
+totalDF$NoStopWords = removeWords(totalDF$Lemma,stopwords())
+head(totalDF,10)
+```
+Create Term Document Matricies for Lemma and No Stop Words
+```{r}
+lemmaText = totalDF$Lemma
+lemmaVSource= VectorSource(lemmaText)
+lemmaCorpus = VCorpus(lemmaVSource)
+lemmaTDM = TermDocumentMatrix(lemmaCorpus)
+str(lemmaTDM)
+```
+```{r}
+nostopText = totalDF$NoStopWords
+nostopVSource= VectorSource(nostopText)
+nostopCorpus = VCorpus(nostopVSource)
+nostopTDM = TermDocumentMatrix(nostopCorpus)
+str(nostopTDM)
+```
+
+Write Results to File for Retrieval Later
+```{r}
+write.csv(totalDF,file='./data/cleanedDataSet.csv',row.names=F)
+```
+```{r}
+save(lemmaTDM,file='./data/LemmaTermDocMatrix.sav')
+save(nostopTDM,file='./data/NoStopWordsTermDocMatrix.sav')
+```
+Create Word Vectors
+```{r}
+
+
+```
+

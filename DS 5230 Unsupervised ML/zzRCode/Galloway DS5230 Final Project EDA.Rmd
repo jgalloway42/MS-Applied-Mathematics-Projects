@@ -1,0 +1,78 @@
+---
+title: "Galloway DS 5230 Final Project-EDA"
+output: html_notebook
+---
+```{r}
+# Imports
+library(tidyverse)
+library(quanteda)
+library(Rtsne)
+library(RColorBrewer)
+library(caret)
+
+```
+### Load the Dataset from Save As Previously Formatted
+```{r}
+load('./data/quantedaDataFrame.sav',verbose = T)
+head(totalDF)
+```
+
+### Create Document Frequency Matrix from Stemmed Data With Stop Words Removed
+```{r}
+nsstem_dfm <- dfm(totalDF$NSStem,tolower=F)
+'Dimensions of Document Frequency Matrix'
+dim(nsstem_dfm)
+view(nsstem_dfm[1:20,1:100])
+```
+### Create Word Cloud to Visualize Most Frequent Terms
+```{r}
+set.seed(42)
+textplot_wordcloud(nsstem_dfm, min_count = 5000,
+                   color=brewer.pal(8,'Dark2'))
+mostFreq <- textstat_frequency(nsstem_dfm, n = 20)
+
+# Sort by reverse frequency order
+mostFreq$feature <- with(mostFreq, reorder(feature, -frequency))
+
+ggplot(mostFreq, aes(x = feature, y = frequency)) +
+    geom_point() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          plot.title = element_text(hjust = 0.5)) +
+    labs(title='Most Fequent Terms for Headline Data')
+```
+### Dataset is too large for my PC to handle so I have to work with a subset
+### Create Stratified Subset of Stemmed and Stopwords Removed Data
+```{r}
+columns_ <- c('Date','Source','Length','HasNumbers','NSStem')
+print(prop.table(table(totalDF$Source)))
+set.seed(42)
+subsetIDX <- createDataPartition(totalDF$Source,times=1,p=0.3,list=F)
+subsetDF <- totalDF[subsetIDX,columns_]
+print(prop.table(table(subsetDF$Source)))
+head(subsetDF)
+```
+### Create Word Cloud again for Sub Set of Data
+```{r}
+ss_dfm <- dfm(subsetDF$NSStem,tolower=F)
+'Dimensions of Document Frequency Matrix'
+dim(ss_dfm)
+set.seed(42)
+textplot_wordcloud(ss_dfm, min_count = 2000,
+                   color=brewer.pal(8,'Dark2'))
+mostFreq <- textstat_frequency(ss_dfm, n = 20)
+
+# Sort by reverse frequency order
+mostFreq$feature <- with(mostFreq, reorder(feature, -frequency))
+
+ggplot(mostFreq, aes(x = feature, y = frequency)) +
+    geom_point() + theme(axis.text.x = element_text(angle = 90, hjust = 1),
+    plot.title = element_text(hjust = 0.5)) +
+    labs(title = 'Most Frequent Terms for Sub Set of Headline Data')
+```
+
+
+```{r}
+Rtsne(as.big.matrix(ss_dfm),perplexity = 30, theta = 0.9, check_duplicates = F,
+      pca = T, partial_pca = T, verbose = T,num_threads = 0)
+```
+

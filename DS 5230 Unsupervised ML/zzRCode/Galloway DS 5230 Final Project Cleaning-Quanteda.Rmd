@@ -1,0 +1,74 @@
+---
+title: "Galloway DS 5230 Final Project-Data Cleaning"
+output: html_notebook
+---
+
+```{r}
+# Imports
+library(tidyverse)
+library(textstem)
+library(quanteda)
+
+# print working director
+getwd()
+```
+## Load the Data from CSV's
+```{r}
+# Load Data from CSV's
+redditDF <- read.csv('./data/RedditNews.csv')
+abcDF <- read.csv('./data/abcnews-date-text.csv')
+```
+## View Imported Data
+```{r}
+head(redditDF)
+head(abcDF)
+```
+## Convert Date Rows to datetime data type, label the sources and align column names
+```{r}
+redditDF$Date <- strptime(redditDF$Date,format='%Y-%m-%d')
+abcDF$publish_date <- strptime(abcDF$publish_date,
+                               format='%Y%m%d')
+
+names(abcDF) <- names(redditDF)
+abcDF$Source <- 'ABC'
+redditDF$Source <- 'Reddit'
+```
+## Look at summaries of dataframes
+```{r}
+'Reddit News'
+summary(redditDF)
+'ABC News'
+summary(abcDF)
+```
+## Concatenate Reddit and ABC Headlines
+```{r}
+totalDF <- rbind(abcDF,redditDF)
+summary(totalDF)
+```
+## Add Features (Length, Has Numbers and ...)
+```{r}
+totalDF$Length = nchar(totalDF$News)
+totalDF$HasNumbers = grepl('[0-9]',totalDF$News)
+head(totalDF,10)
+```
+## Remove Punctuation, Casing, Numbers and Symbols
+```{r}
+totalDF$Tokens = tokens(totalDF$News, what = 'word',
+                        remove_numbers = T, remove_punct = T, 
+                        remove_symbols = T, remove_separators = T)
+totalDF$Tokens = tokens_tolower(totalDF$Tokens)
+head(totalDF,10)
+```
+## Stem, and Remove Stop Words
+```{r}
+totalDF$Stem = tokens_wordstem(totalDF$Tokens)
+totalDF$NoStopWords = tokens_select(totalDF$Tokens,gsub("'","",stopwords()),
+                                    selection = 'remove')
+totalDF$NSStem = tokens_wordstem(totalDF$NoStopWords)
+head(totalDF)
+```
+
+## Write  to File for Retrieval Later
+```{r}
+save(totalDF,file = './data/quantedaDataFrame.sav')
+```
